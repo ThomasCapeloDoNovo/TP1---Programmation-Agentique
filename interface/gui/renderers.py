@@ -9,6 +9,7 @@ draw(surf, rect, problem, state, path) :
 import pygame
 
 from problems.maze import MazeProblem
+from problems.npuzzle import NPuzzleProblem
 from . import theme as T
 
 
@@ -74,8 +75,67 @@ class MazeRenderer(Renderer):
             pygame.draw.circle(surf, (255, 255, 255), center, max(5, cell // 3), 2)
 
 
+class NPuzzleRenderer(Renderer):
+
+    def draw(self, surf, rect, problem, state, path):
+
+        n = len(state)
+
+        cell = int(min(rect.w / n, rect.h / n))
+        ox = rect.x + (rect.w - cell * n) // 2
+        oy = rect.y + (rect.h - cell * n) // 2
+
+        for r in range(n):
+            for c in range(n):
+
+                value = state[r][c]
+
+                cr = pygame.Rect(
+                    ox + c * cell,
+                    oy + r * cell,
+                    cell,
+                    cell
+                )
+
+                if value == problem.EMPTY:
+
+                    pygame.draw.rect(
+                        surf,
+                        (55, 60, 75),
+                        cr.inflate(-6, -6),
+                        border_radius=8
+                    )
+
+                else:
+                    correct = problem.is_correct_position(value, r, c)
+
+                    color = (
+                        (180, 220, 180)
+                        if correct else
+                        (230, 230, 235)
+                    )
+
+                    pygame.draw.rect(
+                        surf,
+                        color,
+                        cr.inflate(-6, -6),
+                        border_radius=8
+                    )
+
+                    T.draw_text(
+                        surf,
+                        str(value),
+                        cr.center,
+                        max(20, int(cell * 0.45)),
+                        (20, 20, 20),
+                        bold=True,
+                        center=True
+                    )
+
+
 RENDERERS = [
     (MazeProblem, MazeRenderer()),
+    (NPuzzleProblem, NPuzzleRenderer())
     # (NavigationProblem, NavigationRenderer()),  <- à ajouter avec chaque nouveau problème
 ]
 

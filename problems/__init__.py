@@ -9,14 +9,19 @@ from .maze import MazeProblem
 from .mazes import MAZES, MazeInstance
 from .mazes import MazeGenerator
 
+from .npuzzle import NPuzzleProblem
+from .npuzzles import NPuzzles, NPuzzleInstance
+
 # type = nom affiché dans le menu
 PROBLEM_LABELS = {
     "maze": "Labyrinthe",
+    "npuzzle": "N-Puzzle"
 }
 
 # type = noms des instances proposées dans le menu (pour le labyrinthe celles de mazes.py)
 PROBLEMS = {
     "maze": list(MAZES.keys()),
+    "npuzzle": list(NPuzzles.keys())
 }
 
 
@@ -35,5 +40,8 @@ def build(problem_type, instance, **kwargs):
         #         )
         #     )
         return MazeProblem(MAZES[instance])
+
+    if problem_type == "npuzzle":
+        return NPuzzleProblem(NPuzzles[instance])
 
     raise ValueError(f"Type de problème inconnu : {problem_type}")
