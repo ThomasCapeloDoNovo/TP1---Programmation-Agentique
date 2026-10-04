@@ -10,7 +10,10 @@ import pygame
 
 from problems.maze import MazeProblem
 from problems.npuzzle import NPuzzleProblem
+from problems.ariths import ArithProblem
 from . import theme as T
+
+from sympy.parsing.sympy_parser import parse_expr
 
 
 class Renderer:
@@ -132,10 +135,74 @@ class NPuzzleRenderer(Renderer):
                         center=True
                     )
 
+class ArithRenderer(Renderer):
+
+    def draw(self, surf, rect, problem, state, path):
+
+        pygame.draw.rect(
+            surf,
+            T.PANEL,
+            rect,
+            border_radius=10
+        )
+
+        card_h = 90
+        gap = 12
+
+        total_h = len(state) * (card_h + gap) - gap
+
+        oy = rect.y + max(20, (rect.h - total_h) // 2)
+
+        for i, (value, expr) in enumerate(state):
+
+            expr_aff = parse_expr(expr, evaluate=False)
+
+            card = pygame.Rect(
+                rect.x + 20,
+                oy + i * (card_h + gap),
+                rect.w - 40,
+                card_h
+            )
+
+            pygame.draw.rect(
+                surf,
+                T.PANEL_LIGHT,
+                card,
+                border_radius=8
+            )
+
+            pygame.draw.rect(
+                surf,
+                T.ACCENT,
+                card,
+                width=2,
+                border_radius=8
+            )
+
+            # expression
+            T.draw_text(
+                surf,
+                expr_aff,
+                (card.x + 12, card.y + 14),
+                22,
+                T.TEXT
+            )
+
+            # résultat
+            T.draw_text(
+                surf,
+                f"= {value:g}",
+                (card.x + 12, card.y + 50),
+                24,
+                T.GOOD,
+                bold=True
+            )
+
 
 RENDERERS = [
     (MazeProblem, MazeRenderer()),
-    (NPuzzleProblem, NPuzzleRenderer())
+    (NPuzzleProblem, NPuzzleRenderer()),
+    (ArithProblem, ArithRenderer())
     # (NavigationProblem, NavigationRenderer()),  <- à ajouter avec chaque nouveau problème
 ]
 

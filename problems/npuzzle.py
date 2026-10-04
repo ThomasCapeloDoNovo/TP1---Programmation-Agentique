@@ -5,7 +5,7 @@ class NPuzzleProblem(Problem):
     """N-Puzzle.
 
     puzzle  : tuple de tuple
-    état  : (ligne, colonne) de l'agent
+    état  : tuple de tuple
     coût  : 1 par case
 
     Pour changer les règles : actions() pour les déplacements autorisés (ex. step_cost() pour les coûts, heuristic() pour l'estimation.
