@@ -64,7 +64,9 @@ class ArithProblem(Problem):
 
     # aucune idée
     def heuristic(self, state):
+        # min de la val absolue ? rajouter ptet le nombre de chiffres restant pour l'encourager à tout utiliser
         return 0
+        #sinon nombre d'opéaration restant si le coût reste à 1 -> len(state) -1, ça pue un peu sa mère franchement
 
     #
     def display(self, state):
