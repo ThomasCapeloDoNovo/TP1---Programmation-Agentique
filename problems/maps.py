@@ -1,3 +1,4 @@
+from enum import Enum
 """Cartes disponibles.
 
 coords : ville -> (x, y) en km (y vers le nord), sert à l'heuristique et au dessin
@@ -5,8 +6,12 @@ roads  : (ville A, ville B, poids). Routes bidirectionnelles.
          Le poids doit être >= distance à vol d'oiseau (heuristique).
 """
 
+class MapsInstance(Enum):
+    FRANCE = "France"
+    QUEBEC = "Québec"
+
 MAPS = {
-    "France": {
+    MapsInstance.FRANCE: {
         "coords": {
             "Paris":      (0, 0),
             "Lille":      (30, 205),
@@ -49,7 +54,7 @@ MAPS = {
         "start": "Lille",
         "goal": "Marseille",
     },
-    "Québec": {
+    MapsInstance.QUEBEC: {
         "coords": {
             "Québec":        (0, 0),
             "Montréal":      (-182, -145),

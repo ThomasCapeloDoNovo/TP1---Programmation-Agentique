@@ -15,8 +15,8 @@ from .npuzzles import NPuzzles, NPuzzleInstance
 from .arith import ArithProblem
 from .ariths import Ariths, ArithInstance
 
+from .maps import MAPS, MapsInstance
 from .navigation import NavigationProblem
-from .maps import MAPS
 
 # type = nom affiché dans le menu
 PROBLEM_LABELS = {

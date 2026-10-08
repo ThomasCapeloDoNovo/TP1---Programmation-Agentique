@@ -10,7 +10,7 @@ def generate():
     numbers = []
     for _ in range(size):
         numbers.append(random.randint(3,10)) #ajout d'un nombre random entre 1 et 20 dans la liste des nombres utilisables
-    print(number,numbers)
+    # print(number,numbers)
     return (
         number,
         tuple(numbers),
