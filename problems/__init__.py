@@ -53,10 +53,10 @@ def build(problem_type, instance, **kwargs):
     elif problem_type =="navigation":
         return NavigationProblem(MAPS[instance]["coords"], MAPS[instance]["roads"], MAPS[instance]["start"], MAPS[instance]["goal"])
 
-    if problem_type == "npuzzle":
+    elif problem_type == "npuzzle":
         return NPuzzleProblem(NPuzzles[instance])
 
-    if problem_type == "arith":
+    elif problem_type == "arith":
         return ArithProblem(Ariths[instance])
 
     raise ValueError(f"Type de problème inconnu : {problem_type}")
