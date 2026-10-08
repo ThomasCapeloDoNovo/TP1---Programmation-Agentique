@@ -52,7 +52,7 @@ class MenuScreen:
         self._problem_changed(self.problem.selected)
 
     def _problem_changed(self, key):
-        self.instance.set_options([(k, k.replace("_", " ")) for k in PROBLEMS[key]])
+        self.instance.set_options([(k, k.value.replace("_", " ")) for k in PROBLEMS[key]])
 
     def start(self):
         self.app.screen_obj = RunScreen(self.app, self.problem.selected, self.instance.selected,
@@ -160,7 +160,7 @@ class RunScreen:
     # ---------- dessin ----------
     def draw(self, surf):
         surf.fill(T.BG)
-        title = (f"{PROBLEM_LABELS.get(self.ptype, self.ptype)} / {self.instance.replace('_', ' ')}"
+        title = (f"{PROBLEM_LABELS.get(self.ptype, self.ptype)} / {self.instance.value.replace('_', ' ')}"
                  f"  |  {STRATEGIES[self.strategy].name}  |  {self.mode}-search")
         T.draw_text(surf, title, (20, 30), 32, T.TEXT, bold=True)
         self.menu_btn.draw(surf)

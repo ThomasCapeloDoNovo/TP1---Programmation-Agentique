@@ -9,7 +9,11 @@ draw(surf, rect, problem, state, path) :
 import pygame
 
 from problems.maze import MazeProblem
+from problems.npuzzle import NPuzzleProblem
+from problems.ariths import ArithProblem
 from . import theme as T
+
+from sympy.parsing.sympy_parser import parse_expr
 
 
 class Renderer:
@@ -74,8 +78,131 @@ class MazeRenderer(Renderer):
             pygame.draw.circle(surf, (255, 255, 255), center, max(5, cell // 3), 2)
 
 
+class NPuzzleRenderer(Renderer):
+
+    def draw(self, surf, rect, problem, state, path):
+
+        n = len(state)
+
+        cell = int(min(rect.w / n, rect.h / n))
+        ox = rect.x + (rect.w - cell * n) // 2
+        oy = rect.y + (rect.h - cell * n) // 2
+
+        for r in range(n):
+            for c in range(n):
+
+                value = state[r][c]
+
+                cr = pygame.Rect(
+                    ox + c * cell,
+                    oy + r * cell,
+                    cell,
+                    cell
+                )
+
+                if value == problem.EMPTY:
+
+                    pygame.draw.rect(
+                        surf,
+                        (55, 60, 75),
+                        cr.inflate(-6, -6),
+                        border_radius=8
+                    )
+
+                else:
+                    correct = problem.is_correct_position(value, r, c)
+
+                    color = (
+                        (180, 220, 180)
+                        if correct else
+                        (230, 230, 235)
+                    )
+
+                    pygame.draw.rect(
+                        surf,
+                        color,
+                        cr.inflate(-6, -6),
+                        border_radius=8
+                    )
+
+                    T.draw_text(
+                        surf,
+                        str(value),
+                        cr.center,
+                        max(20, int(cell * 0.45)),
+                        (20, 20, 20),
+                        bold=True,
+                        center=True
+                    )
+
+class ArithRenderer(Renderer):
+
+    def draw(self, surf, rect, problem, state, path):
+
+        pygame.draw.rect(
+            surf,
+            T.PANEL,
+            rect,
+            border_radius=10
+        )
+
+        card_h = 90
+        gap = 12
+
+        total_h = len(state) * (card_h + gap) - gap
+
+        oy = rect.y + max(20, (rect.h - total_h) // 2)
+
+        for i, (value, expr) in enumerate(state):
+
+            expr_aff = parse_expr(expr, evaluate=False)
+
+            card = pygame.Rect(
+                rect.x + 20,
+                oy + i * (card_h + gap),
+                rect.w - 40,
+                card_h
+            )
+
+            pygame.draw.rect(
+                surf,
+                T.PANEL_LIGHT,
+                card,
+                border_radius=8
+            )
+
+            pygame.draw.rect(
+                surf,
+                T.ACCENT,
+                card,
+                width=2,
+                border_radius=8
+            )
+
+            # expression
+            T.draw_text(
+                surf,
+                expr_aff,
+                (card.x + 12, card.y + 14),
+                22,
+                T.TEXT
+            )
+
+            # résultat
+            T.draw_text(
+                surf,
+                f"= {value:g}",
+                (card.x + 12, card.y + 50),
+                24,
+                T.GOOD,
+                bold=True
+            )
+
+
 RENDERERS = [
     (MazeProblem, MazeRenderer()),
+    (NPuzzleProblem, NPuzzleRenderer()),
+    (ArithProblem, ArithRenderer())
     # (NavigationProblem, NavigationRenderer()),  <- à ajouter avec chaque nouveau problème
 ]
 
