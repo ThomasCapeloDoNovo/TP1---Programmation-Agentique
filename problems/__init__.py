@@ -15,18 +15,23 @@ from .npuzzles import NPuzzles, NPuzzleInstance
 from .arith import ArithProblem
 from .ariths import Ariths, ArithInstance
 
+from .maps import MAPS, MapsInstance
+from .navigation import NavigationProblem
+
 # type = nom affiché dans le menu
 PROBLEM_LABELS = {
     "maze": "Labyrinthe",
     "npuzzle": "N-Puzzle",
-    "arith": "Jeu arithmétique"
+    "arith": "Jeu arithmétique",
+    "navigation": "Navigation",
 }
 
 # type = noms des instances proposées dans le menu (pour le labyrinthe celles de mazes.py)
 PROBLEMS = {
     "maze": list(MAZES.keys()),
     "npuzzle": list(NPuzzles.keys()),
-    "arith": list(Ariths.keys())
+    "arith": list(Ariths.keys()),
+    "navigation": list(MAPS.keys()),
 }
 
 
@@ -45,6 +50,8 @@ def build(problem_type, instance, **kwargs):
         #         )
         #     )
         return MazeProblem(MAZES[instance])
+    elif problem_type =="navigation":
+        return NavigationProblem(MAPS[instance]["coords"], MAPS[instance]["roads"], MAPS[instance]["start"], MAPS[instance]["goal"])
 
     if problem_type == "npuzzle":
         return NPuzzleProblem(NPuzzles[instance])

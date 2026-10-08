@@ -11,6 +11,7 @@ import pygame
 from problems.maze import MazeProblem
 from problems.npuzzle import NPuzzleProblem
 from problems.ariths import ArithProblem
+from problems.navigation import NavigationProblem
 from . import theme as T
 
 from sympy.parsing.sympy_parser import parse_expr
@@ -199,12 +200,59 @@ class ArithRenderer(Renderer):
             )
 
 
+class NavigationRenderer(Renderer):
+    def draw(self, surf, rect, problem, state, path):
+        xs = [x for x, _ in problem.coords.values()]
+        ys = [y for _, y in problem.coords.values()]
+        margin = 60
+
+        def to_px(city):
+            """Coordonnées (km) -> pixels. y est inversé : le nord est en haut."""
+            x, y = problem.coords[city]
+            px = rect.x + margin + (x - min(xs)) / ((max(xs) - min(xs)) or 1) * (rect.w - 2 * margin)
+            py = rect.y + margin + (max(ys) - y) / ((max(ys) - min(ys)) or 1) * (rect.h - 2 * margin)
+            return int(px), int(py)
+
+        # routes + poids (chaque route une seule fois)
+        seen = set()
+        for a, neighbors in problem.graph.items():
+            for b, w in neighbors.items():
+                if (b, a) in seen:
+                    continue
+                seen.add((a, b))
+                pa, pb = to_px(a), to_px(b)
+                pygame.draw.line(surf, (90, 98, 115), pa, pb, 3)
+                mid = ((pa[0] + pb[0]) // 2, (pa[1] + pb[1]) // 2)
+                T.draw_text(surf, f"{w:g}", mid, 20, T.MUTED, center=True)
+
+        # itinéraire
+        if len(path) > 1:
+            pygame.draw.lines(surf, T.WARN, False, [to_px(c) for c in path], 6)
+
+        # villes : départ vert, but rouge, position courante en bleu
+        for city in problem.coords:
+            if city == problem.start:
+                color = T.GOOD
+            elif city == problem.goal:
+                color = T.BAD
+            else:
+                color = T.PANEL_LIGHT
+            p = to_px(city)
+            pygame.draw.circle(surf, color, p, 14)
+            pygame.draw.circle(surf, T.TEXT, p, 14, 2)
+            T.draw_text(surf, city, (p[0], p[1] + 26), 22, T.TEXT, center=True)
+
+        if state is not None:
+            pygame.draw.circle(surf, T.ACCENT, to_px(state), 8)
+
+
 RENDERERS = [
     (MazeProblem, MazeRenderer()),
     (NPuzzleProblem, NPuzzleRenderer()),
-    (ArithProblem, ArithRenderer())
+    (ArithProblem, ArithRenderer()),
+    (NavigationProblem, NavigationRenderer()),
     # (NavigationProblem, NavigationRenderer()),  <- à ajouter avec chaque nouveau problème
-]
+    ]
 
 
 def get_renderer(problem):
