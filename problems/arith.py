@@ -64,11 +64,21 @@ class ArithProblem(Problem):
 
     # aucune idée
     def heuristic(self, state):
-        # min de la val absolue ? rajouter ptet le nombre de chiffres restant pour l'encourager à tout utiliser
-        return 0
-        #sinon nombre d'opéaration restant si le coût reste à 1 -> len(state) -1, ça pue un peu sa mère franchement
+        """h(s) : estimation du coût restant (admissible et consistante).
+        
+        - len(state) - 1 : nombre minimal d'opérations restantes.
+        - Composante secondaire (< 1) : pénalité basée sur l'écart au but.
+        """
+        if not state:
+            return 0
 
-    #
+        ops_remaining = max(0, len(state) - 1)
+        min_diff = min(abs(val[0] - self.goal) for val in state)
+        proximity_factor = min_diff / (1 + min_diff)
+
+        return ops_remaining + proximity_factor
+
+    
     def display(self, state):
         for s in state:
             print(s)
