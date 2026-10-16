@@ -84,11 +84,11 @@ Instance Difficile
 
     [Algorithme], [Mode], [Coût total], [Profondeur], [Nœuds générés], [Nœuds expansés], [Max OPEN], [Temps (ms)],
 
-    [BFS], [Tree], [#text(red)[N/A]], [#text(red)[N/A]], [265580], [19612], [245968], [10s],
-    [BFS], [Graph], [#text(red)[N/A]], [#text(red)[N/A]], [217432], [19312], [198120], [10s],
+    [BFS], [Tree], [#text(red)[N/A]], [#text(red)[N/A]], [265580], [19612], [245968], [10s\*],
+    [BFS], [Graph], [#text(red)[N/A]], [#text(red)[N/A]], [217432], [19312], [198120], [10s\*],
 
-    [UCS], [Tree], [#text(red)[N/A]], [#text(red)[N/A]], [255654], [18783], [236871], [10s],
-    [UCS], [Graph], [#text(red)[N/A]], [#text(red)[N/A]], [194410], [17034], [177376], [10s],
+    [UCS], [Tree], [#text(red)[N/A]], [#text(red)[N/A]], [255654], [18783], [236871], [10s\*],
+    [UCS], [Graph], [#text(red)[N/A]], [#text(red)[N/A]], [194410], [17034], [177376], [10s\*],
 
     [Greedy], [Tree], [5], [5], [144], [10], [136], [0.005s],
     [Greedy], [Graph], [5], [5], [144], [10], [136], [0.004s],
@@ -97,6 +97,7 @@ Instance Difficile
     [A\*], [Graph], [5], [5], [458], [63], [395], [0.020s],
   )
 }
+\* Limite de temps (10s) atteinte, stop par sécurité.
 
 Les résultats montrent clairement que l'heuristique joue un rôle important dans le jeu arithmétique. Les algorithmes non informés, BFS et UCS, voient leur nombre de nœuds générés augmenter très vite quand la taille du problème grandit. Sur l'instance difficile, aucun des deux ne trouve de solution avant d'atteindre la limite de temps fixée.
 

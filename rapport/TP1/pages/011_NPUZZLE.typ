@@ -18,7 +18,7 @@ h(s) = sum_(t in T) (
   |r_s(t) - r_g(t)| + |c_s(t) - c_g(t)|
 )
 $
-où T représente l'ensemble des tuiles, r_s et c_s la position actuelle de la tuile et, r_g et c_g la position goal de la tuile
+où T représente l'ensemble des tuiles, $r_s$ et $c_s$ la position actuelle de la tuile et, $r_g$ et $c_g$ la position goal de la tuile
 
 
 #heading(level: 2)[Comparaison des algorithmes]
@@ -95,7 +95,7 @@ Instance 5x5
 }
 \* Limite de temps (30s) atteinte, stop par sécurité.
 
-Ces résultats nous montrent que l'heuristique joue un rôle clé dans la résolution du taquin. BFS et UCS ne trouvent souvent pas la solution en un temps résonnable, et lors de l'arrêt de la recherche, le nombre de noeuds explorés est énorme. J'ai essayé de faire tourner BFS et UCS plusieurs minutes mais cela ne changeait rien, j'ai préféré laisser les résultats sous 30s par soucis de lisibilité. En bref, sur des instances au-delà de 3x3, il est vite compliqué d'obtenir une solution rapidement avec ces deux algorithmes.
+Ces résultats nous montrent que l'heuristique joue un rôle clé dans la résolution du taquin. BFS et UCS ne trouvent souvent pas la solution en un temps résonnable, et lors de l'arrêt de la recherche, le nombre de noeuds explorés est énorme. Nous avons essayé de repousser au maximum les limites de temps et de mémoire pour les algorithmes BFS et UCS, mais aucune solution n'était trouvée, alors nous avons laissé les résultats sous 30s par soucis de lisibilité. Plus généralement, sur des instances au-delà de 3x3, il est vite compliqué d'obtenir une solution rapidement avec ces deux algorithmes.
 
 Au contraire, Greedy et A\* s'en sortent très bien sur toutes les instances, en tout cas pour leur version Graph Search. On voit que dans ce problème, la version Tree Search a beaucoup plus de difficultés à trouver une solution. 
 
