@@ -135,7 +135,6 @@ class NPuzzleRenderer(Renderer):
                         bold=True,
                         center=True
                     )
-
 class ArithRenderer(Renderer):
 
     def draw(self, surf, rect, problem, state, path):
@@ -147,12 +146,38 @@ class ArithRenderer(Renderer):
             border_radius=10
         )
 
+        # --- 1. Affichage du but ---
+        # (Adapte selon la structure de ton objet problem : problem.goal ou problem['goal'])
+        goal_val = getattr(problem, 'goal', problem.get('goal', '')) if hasattr(problem, 'get') else getattr(problem, 'goal', problem)
+        
+        T.draw_text(
+            surf,
+            f"Objectif : {goal_val}",
+            (rect.x + 20, rect.y + 15),
+            30,
+            T.ACCENT,
+            bold=True
+        )
+
+        # Petite ligne de séparation sous le but
+        pygame.draw.line(
+            surf,
+            T.PANEL_LIGHT,
+            (rect.x + 15, rect.y + 45),
+            (rect.right - 15, rect.y + 45),
+            1
+        )
+
+        # --- 2. Affichage des cartes des nombres actuels ---
         card_h = 90
         gap = 12
 
         total_h = len(state) * (card_h + gap) - gap
 
-        oy = rect.y + max(20, (rect.h - total_h) // 2)
+        # On décale oy vers le bas pour laisser la place à l'en-tête du but (~55px)
+        header_offset = 55
+        available_h = rect.h - header_offset
+        oy = rect.y + header_offset + max(10, (available_h - total_h) // 2)
 
         for i, (value, expr) in enumerate(state):
 
@@ -198,7 +223,6 @@ class ArithRenderer(Renderer):
                 T.GOOD,
                 bold=True
             )
-
 
 class NavigationRenderer(Renderer):
     def draw(self, surf, rect, problem, state, path):

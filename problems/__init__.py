@@ -5,6 +5,8 @@
 #   2. l'ajouter ici : PROBLEM_LABELS, PROBLEMS et build()
 #   3. écrire son affichage dans interface/gui/renderers.py (sans cela, l'état s'affiche en texte)
 
+import random
+
 from .maze import MazeProblem
 from .mazes import MAZES, MazeInstance
 from .mazes import MazeGenerator
@@ -13,7 +15,7 @@ from .npuzzle import NPuzzleProblem
 from .npuzzles import NPuzzles, NPuzzleInstance
 
 from .arith import ArithProblem
-from .ariths import Ariths, ArithInstance
+from .ariths import Ariths, ArithInstance, generate
 
 from .maps import MAPS, MapsInstance
 from .navigation import NavigationProblem
@@ -38,18 +40,10 @@ PROBLEMS = {
 def build(problem_type, instance, **kwargs):
     """Construit et retourne un nouveau Problem à partir de son type et du nom de l'instance."""
     if problem_type == "maze":
-        # if instance == MazeInstance.ALEA:
-        #     print(MazeGenerator.generate(
-        #                         kwargs["width"],
-        #                         kwargs["heigth"]
-        #                     ))
-        #     return MazeProblem(
-        #         MazeGenerator.generate(
-        #             kwargs["width"],
-        #             kwargs["heigth"]
-        #         )
-        #     )
+        if instance == MazeInstance.ALEA:
+            return MazeProblem(MazeGenerator.generate(random.randint(10, 30), random.randint(10, 30)))
         return MazeProblem(MAZES[instance])
+    
     elif problem_type =="navigation":
         return NavigationProblem(MAPS[instance]["coords"], MAPS[instance]["roads"], MAPS[instance]["start"], MAPS[instance]["goal"])
 
@@ -57,6 +51,8 @@ def build(problem_type, instance, **kwargs):
         return NPuzzleProblem(NPuzzles[instance])
 
     elif problem_type == "arith":
+        if instance == ArithInstance.ALEA:
+            return ArithProblem(generate())
         return ArithProblem(Ariths[instance])
 
     raise ValueError(f"Type de problème inconnu : {problem_type}")
