@@ -43,9 +43,9 @@
 
 #align(bottom + left)[
   #text(weight: "bold")[#underline("Etudiants :")]\
-  CAPELO Thomas\
+  CAPELO DO NOVO Thomas\
   LOUET Noah\
-  ..\
+  FOUGERAY Mattéo\
   ..
 ]
 

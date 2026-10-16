@@ -12,8 +12,3 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
-
-### Lancer le benchmarking des algorithmes (le fichier aura un nom similaire je pense)
-```bash
-python benchmark.py
-```
