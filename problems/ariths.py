@@ -20,7 +20,9 @@ def generate():
 
 class ArithInstance(Enum):
     FACILE = "facile"
+    MOYENNE = "moyenne"
     DIFFICILE = "difficile"
+    TDIFFICILE = "très difficile"
     # CONTOUR = "contour"
     # PIEGE = "Avec un piège"
     SANS_SOL = "sans_solution"
@@ -33,14 +35,24 @@ Ariths = {
         ("+","-","/","*")
     )
     ,
-    ArithInstance.SANS_SOL:(
-        1,
-        (3,5),
+    ArithInstance.MOYENNE:(
+        100,
+        (2,3,5,7,25),
         ("+","-","/","*")
     ),
     ArithInstance.DIFFICILE:(
+        150,
+        (2,3,5,7,11,13),
+        ("+","-","/","*")
+    ),
+    ArithInstance.TDIFFICILE:(
         888,
         (13, 19, 23, 29, 37, 41),
+        ("+","-","/","*")
+    ),
+    ArithInstance.SANS_SOL:(
+        1,
+        (3,5),
         ("+","-","/","*")
     ),
     ArithInstance.ALEA: generate()
