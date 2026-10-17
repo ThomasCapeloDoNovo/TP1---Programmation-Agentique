@@ -1,7 +1,7 @@
 #heading(level: 1)[Navigation]
 
 #heading(level: 2)[Modélisation]
-Ici nous cherchons à ce qu'AUSSI se rende d'une ville à une autre, dans un graphe où les sommets sont des villes et les routes des arrêtes avec un poids (la distance en km)
+Ici nous cherchons à ce qu'AUSSI se rende d'une ville à une autre, dans un graphe où les sommets sont des villes et les routes des arrêtes avec un poids (la distance en km).
 
 Un état est la ville où se trouve AUSSI et chaque déplacement coûte la distance d'une route entre deux villes.
 #heading(level: 2)[Heuristique]

@@ -27,8 +27,6 @@ Cette heuristique n'est pas admissible. Elle a toutefois été retenue afin d'or
 
 #heading(level: 2)[Comparaison des algorithmes]
 
-#v(0.5cm)
-
 Instance Facile
 #context {
   set text(size: 10pt)
