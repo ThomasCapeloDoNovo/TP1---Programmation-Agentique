@@ -45,13 +45,8 @@
   #text(weight: "bold")[#underline("Etudiants :")]\
   CAPELO DO NOVO Thomas\
   LOUET Noah\
-<<<<<<< HEAD
-  ..\
-  BERTUCAT Antoine
-=======
   FOUGERAY Mattéo\
-  ..
->>>>>>> 83d53df9554db09bc9f49c9b972a5d4aec7cc7a4
+  BERTUCAT Antoine
 ]
 
 
