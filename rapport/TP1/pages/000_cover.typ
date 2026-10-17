@@ -46,7 +46,7 @@
   CAPELO Thomas\
   LOUET Noah\
   ..\
-  ..
+  BERTUCAT Antoine
 ]
 
 
