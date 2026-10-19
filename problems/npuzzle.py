@@ -114,7 +114,7 @@ class NPuzzleProblem(Problem):
     def display(self, state):
         place_by_number = len(str(len(state) ** 2)) + 2
         for id_row, row in enumerate(state):
-            print("-" * place_by_number * len(state) + len(state) - 1)
+            print("-" * ( place_by_number * len(state) + len(state) - 1) )
             print("|", end=None)
             for id_col, col in enumerate(row):
                 empty_place = place_by_number - len(str(col))
@@ -122,4 +122,4 @@ class NPuzzleProblem(Problem):
                 print(col, end=None)
                 print("|", end=None)
             print()
-        print("-" * place_by_number * len(state) + len(state) - 1)
+        print("-" * ( place_by_number * len(state) + len(state) - 1) )

@@ -5,6 +5,12 @@ from src.agent import AGENT
 # "console" : affichage texte, utilise les paramètres de la branche console
 INTERFACE = "gui"
 
+#import des instances pour la version textuelle
+from problems.mazes import MazeInstance
+from problems.npuzzles import NPuzzleInstance
+from problems.ariths import ArithInstance
+from problems.maps import MapsInstance
+
 
 if INTERFACE == "gui":
     from interface.gui.app import launch
@@ -12,10 +18,10 @@ if INTERFACE == "gui":
 
 else:           # Paramètres utilisés seulement en mode console.
 
-    PROBLEM_TYPE = "maze"        # une clé de : problems/__init__.py
-    INSTANCE = "facile"          # un nom de PROBLEMS[PROBLEM_TYPE] (ex. problems/mazes.py)
-    STRATEGY = "astar"           # bfs, ucs, greedy, astar
-    MODE = "graph"               # "graph" (mémorise les états vus) ou "tree" (aucune mémoire)
+    PROBLEM_TYPE = "arith"                  # une clé de : problems/__init__.py
+    INSTANCE = ArithInstance.FACILE         # un nom de PROBLEMS[PROBLEM_TYPE] (ex. problems/ariths.py)
+    STRATEGY = "astar"                      # bfs, ucs, greedy, astar
+    MODE = "graph"                          # "graph" (mémorise les états vus) ou "tree" (aucune mémoire)
 
     problem = build(PROBLEM_TYPE, INSTANCE)
 
