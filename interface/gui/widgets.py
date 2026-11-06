@@ -90,118 +90,69 @@ class VerticalSelector(Selector):
         self.height = y - self.y
         
 class NumberInput:
+    """Sélecteur numérique avec boutons - et +, bornes et valeur par défaut."""
     def __init__(
         self,
         title,
         x,
         y,
         width,
-        default_value=0,
-        min_value=0,
+        default_value=1,
+        min_value=1,
         max_value=None,
         allow_float=False
     ):
         self.title = title
         self.rect = pygame.Rect(x, y + 28, width, 38)
-
-        self.default_value = str(default_value)
+        self.default_value = float(default_value) if allow_float else int(default_value)
         self.value = self.default_value
-
         self.min_value = min_value
         self.max_value = max_value
         self.allow_float = allow_float
-
         self.active = False
+        self.minus_rect = pygame.Rect(self.rect.x, self.rect.y, 32, self.rect.height)
+        self.plus_rect = pygame.Rect(self.rect.right - 32, self.rect.y, 32, self.rect.height)
 
     def handle(self, ev):
-
-        if ev.type == pygame.MOUSEBUTTONDOWN:
-            was_active = self.active
-            self.active = self.rect.collidepoint(ev.pos)
-
-            # Validation quand on quitte le champ
-            if was_active and not self.active:
-                self.validate()
-
-        elif self.active and ev.type == pygame.KEYDOWN:
-
-            if ev.key == pygame.K_BACKSPACE:
-                self.value = self.value[:-1]
-
-            elif ev.key == pygame.K_RETURN:
-                self.validate()
-                self.active = False
-
-            elif ev.unicode.isdigit():
-                self.value += ev.unicode
-
-            elif (
-                self.allow_float
-                and ev.unicode == "."
-                and "." not in self.value
-            ):
-                self.value += "."
+        if ev.type != pygame.MOUSEBUTTONDOWN or ev.button != 1:
+            return
+        if self.minus_rect.collidepoint(ev.pos):
+            self.value = max(self.min_value, self.value - 1)
+            self.active = False
+        elif self.plus_rect.collidepoint(ev.pos):
+            next_value = self.value + 1
+            if self.max_value is None or next_value <= self.max_value:
+                self.value = next_value
+            self.active = False
 
     def validate(self):
-
-        if self.value.strip() == "":
-            self.value = self.default_value
-            return
-
+        """Garantit une valeur valide ; sinon rétablit la valeur par défaut."""
         try:
-            num = float(self.value) if self.allow_float else int(self.value)
-
-            if self.min_value is not None:
-                num = max(num, self.min_value)
-
-            if self.max_value is not None:
-                num = min(num, self.max_value)
-
-            if self.allow_float:
-                self.value = str(num)
-            else:
-                self.value = str(int(num))
-
-        except ValueError:
+            value = float(self.value) if self.allow_float else int(self.value)
+            if value < self.min_value or (self.max_value is not None and value > self.max_value):
+                raise ValueError
+            self.value = value
+        except (ValueError, TypeError, OverflowError):
             self.value = self.default_value
+        return self.value
 
     @property
     def int_value(self):
-        self.validate()
-        return int(float(self.value))
+        return int(self.validate())
 
     @property
     def float_value(self):
-        self.validate()
-        return float(self.value)
+        return float(self.validate())
 
     def draw(self, surf):
+        T.draw_text(surf, self.title, (self.rect.x, self.rect.y - 28), 22, T.MUTED)
+        pygame.draw.rect(surf, T.PANEL, self.rect, border_radius=8)
+        pygame.draw.rect(surf, T.PANEL_LIGHT, self.rect, width=2, border_radius=8)
 
-        T.draw_text(
-            surf,
-            self.title,
-            (self.rect.x, self.rect.y - 28),
-            22,
-            T.MUTED
-        )
+        # Boutons moins et plus
+        for button_rect, label in ((self.minus_rect, "-"), (self.plus_rect, "+")):
+            pygame.draw.rect(surf, T.PANEL_LIGHT, button_rect, border_radius=6)
+            T.draw_text(surf, label, button_rect.center, 25, T.TEXT, center=True)
 
-        pygame.draw.rect(
-            surf,
-            T.PANEL_LIGHT if self.active else T.PANEL,
-            self.rect,
-            border_radius=8
-        )
+        T.draw_text(surf, str(self.value), self.rect.center, 22, T.TEXT, center=True)
 
-        pygame.draw.rect(
-            surf,
-            T.ACCENT if self.active else T.PANEL_LIGHT,
-            self.rect,
-            width=2,
-            border_radius=8
-        )
-
-        # Ancrer le texte à gauche, tout en centrant sa boîte verticalement.
-        value_surface = T.font(22).render(self.value, True, T.TEXT)
-        value_rect = value_surface.get_rect()
-        value_rect.midleft = (self.rect.x + 10, self.rect.centery)
-        surf.blit(value_surface, value_rect)
