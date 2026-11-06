@@ -39,6 +39,10 @@ class MenuScreen:
     def __init__(self, app):
         self.app = app
         x, w = 60, W - 120
+
+        # Bouton pour basculer vers le mode Jeux (AUSSI V3)
+        self.switch_btn = Button((x, 550, 320, 48), "Mode Jeux Adversariaux (TP2)", self.goto_games)
+
         self.problem = Selector("Problème", x, 110, w,
                                 [(k, PROBLEM_LABELS.get(k, k.title())) for k in PROBLEMS],
                                 on_change=self._problem_changed)
@@ -58,11 +62,16 @@ class MenuScreen:
         self.app.screen_obj = RunScreen(self.app, self.problem.selected, self.instance.selected,
                                         self.strategy.selected, self.mode.selected)
 
+    def goto_games(self):
+            from .gamemenuscreen import GameMenuScreen
+            self.app.screen_obj = GameMenuScreen(self.app)
+
     def handle(self, ev):
         if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
             for s in self.selectors:
                 s.click(ev.pos)
             self.launch.click(ev.pos)
+            self.switch_btn.click(ev.pos)
         elif ev.type == pygame.KEYDOWN and ev.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
             self.start()
 
@@ -73,6 +82,7 @@ class MenuScreen:
         surf.fill(T.BG)
         T.draw_text(surf, "AUSSI V2.0", (60, 30), 54, T.ACCENT, bold=True)
         T.draw_text(surf, "Agent Universel de Support Super Intelligent", (60, 75), 26, T.MUTED)
+        self.switch_btn.draw(surf)
         for s in self.selectors:
             s.draw(surf)
         self.launch.draw(surf)
