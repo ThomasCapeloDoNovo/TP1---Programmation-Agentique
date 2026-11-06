@@ -200,10 +200,8 @@ class NumberInput:
             border_radius=8
         )
 
-        T.draw_text(
-            surf,
-            self.value,
-            (self.rect.x + 10, self.rect.centery),
-            22,
-            T.TEXT
-        )
+        # Ancrer le texte à gauche, tout en centrant sa boîte verticalement.
+        value_surface = T.font(22).render(self.value, True, T.TEXT)
+        value_rect = value_surface.get_rect()
+        value_rect.midleft = (self.rect.x + 10, self.rect.centery)
+        surf.blit(value_surface, value_rect)

@@ -35,24 +35,54 @@ def fit_text(text, size, max_width):
     return text + "…"
 
 
+class HomeScreen:
+    """Écran d'accueil permettant de choisir la famille de problèmes."""
+    def __init__(self, app):
+        self.app = app
+        self.search_btn = Button((90, 250, 430, 100), "Problème de recherche", self.goto_search)
+        self.games_btn = Button((580, 250, 430, 100), "Problème à 2 joueurs", self.goto_games)
+
+    def goto_search(self):
+        self.app.screen_obj = MenuScreen(self.app)
+
+    def goto_games(self):
+        from .gamemenuscreen import GameMenuScreen
+        self.app.screen_obj = GameMenuScreen(self.app)
+
+    def handle(self, ev):
+        if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
+            self.search_btn.click(ev.pos)
+            self.games_btn.click(ev.pos)
+
+    def update(self, dt):
+        pass
+
+    def draw(self, surf):
+        surf.fill(T.BG)
+        T.draw_text(surf, "AUSSI V3.0", (60, 30), 54, T.ACCENT, bold=True)
+        T.draw_text(surf, "Agent Universel de Support Super Intelligent", (60, 82), 26, T.MUTED)
+        T.draw_text(surf, "Que souhaitez-vous résoudre ?", (W // 2, 180), 30, T.TEXT, center=True, bold=True)
+        self.search_btn.draw(surf)
+        self.games_btn.draw(surf)
+
+
 class MenuScreen:
     def __init__(self, app):
         self.app = app
         x, w = 60, W - 120
+        self.search_type_btn = Button((x, 105, 300, 44), "Problème de recherche", self.show_search)
+        self.games_type_btn = Button((x + 315, 105, 300, 44), "Problème à 2 joueurs", self.show_games)
 
-        # Bouton pour basculer vers le mode Jeux (AUSSI V3)
-        self.switch_btn = Button((x, 550, 320, 48), "Mode Jeux Adversariaux (TP2)", self.goto_games)
-
-        self.problem = Selector("Problème", x, 110, w,
+        self.problem = Selector("Problème", x, 170, w,
                                 [(k, PROBLEM_LABELS.get(k, k.title())) for k in PROBLEMS],
                                 on_change=self._problem_changed)
-        self.instance = Selector("Instance", x, 200, w, [])
-        self.strategy = Selector("Stratégie", x, 290, w,
+        self.instance = Selector("Instance", x, 260, w, [])
+        self.strategy = Selector("Stratégie", x, 350, w,
                                  [(k, s.name) for k, s in STRATEGIES.items()], "astar")
-        self.mode = Selector("Mode de recherche", x, 380, w,
+        self.mode = Selector("Mode de recherche", x, 440, w,
                              [("graph", "Graph-Search"), ("tree", "Tree-Search")], "graph")
         self.selectors = [self.problem, self.instance, self.strategy, self.mode]
-        self.launch = Button((x, 490, 240, 52), "Lancer", self.start)
+        self.launch = Button((x, 550, 240, 52), "Lancer", self.start)
         self._problem_changed(self.problem.selected)
 
     def _problem_changed(self, key):
@@ -62,16 +92,20 @@ class MenuScreen:
         self.app.screen_obj = RunScreen(self.app, self.problem.selected, self.instance.selected,
                                         self.strategy.selected, self.mode.selected)
 
-    def goto_games(self):
-            from .gamemenuscreen import GameMenuScreen
-            self.app.screen_obj = GameMenuScreen(self.app)
+    def show_search(self):
+        pass  # Le menu de recherche est déjà affiché.
+
+    def show_games(self):
+        from .gamemenuscreen import GameMenuScreen
+        self.app.screen_obj = GameMenuScreen(self.app)
 
     def handle(self, ev):
         if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
             for s in self.selectors:
                 s.click(ev.pos)
+            self.search_type_btn.click(ev.pos)
+            self.games_type_btn.click(ev.pos)
             self.launch.click(ev.pos)
-            self.switch_btn.click(ev.pos)
         elif ev.type == pygame.KEYDOWN and ev.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
             self.start()
 
@@ -80,13 +114,14 @@ class MenuScreen:
 
     def draw(self, surf):
         surf.fill(T.BG)
-        T.draw_text(surf, "AUSSI V2.0", (60, 30), 54, T.ACCENT, bold=True)
-        T.draw_text(surf, "Agent Universel de Support Super Intelligent", (60, 75), 26, T.MUTED)
-        self.switch_btn.draw(surf)
+        T.draw_text(surf, "AUSSI V3.0", (60, 25), 48, T.ACCENT, bold=True)
+        T.draw_text(surf, "Agent Universel de Support Super Intelligent", (60, 72), 24, T.MUTED)
+        self.search_type_btn.draw(surf, selected=True)
+        self.games_type_btn.draw(surf)
         for s in self.selectors:
             s.draw(surf)
         self.launch.draw(surf)
-        T.draw_text(surf, "Entrée : lancer", (320, 504), 22, T.MUTED)
+        T.draw_text(surf, "Entrée : lancer", (320, 564), 22, T.MUTED)
 
 
 class RunScreen:

@@ -39,8 +39,12 @@ class GameMenuScreen:
         self.app = app
         x, w = 60, W - 120
         
+        # Choix du type de problème, toujours accessible en haut
+        self.search_type_btn = Button((x, 100, 300, 44), "Problème de recherche", self.show_search)
+        self.games_type_btn = Button((x + 315, 100, 300, 44), "Problème à 2 joueurs", self.show_games)
+
         # Choix du jeu
-        self.game_selector = Selector("Jeu", x, 95, w, 
+        self.game_selector = Selector("Jeu", x, 165, w, 
             [[b, li["title"]] for b, li in list(LI_GAME.items())]
         )
         
@@ -50,12 +54,12 @@ class GameMenuScreen:
         col_w = w // 2 - 15
         
         # Configuration Joueur 1 (Colonne de gauche)
-        self.p1_selector = VerticalSelector("Joueur 1 (X)", x, 170, col_w, agent_options, "human")
+        self.p1_selector = VerticalSelector("Joueur 1 (X)", x, 240, col_w, agent_options, "human")
         
         self.p1_depth = NumberInput(
             "Profondeur max",
             x,
-            380,
+            445,
             120,
             default_value=5,
             min_value=1,
@@ -65,7 +69,7 @@ class GameMenuScreen:
         self.p1_time = NumberInput(
             "Temps (s)",
             x,
-            450,
+            530,
             120,
             default_value=1.0,
             min_value=0.1,
@@ -74,12 +78,12 @@ class GameMenuScreen:
         )
 
         # Configuration Joueur 2 (Colonne de droite)
-        self.p2_selector = VerticalSelector("Joueur 2 (O)", x + col_w + 30, 170, col_w, agent_options, "minimax")
+        self.p2_selector = VerticalSelector("Joueur 2 (O)", x + col_w + 30, 240, col_w, agent_options, "minimax")
         
         self.p2_depth = NumberInput(
             "Profondeur",
             x + col_w + 30,
-            380,
+            445,
             120,
             default_value=5,
             min_value=1,
@@ -89,7 +93,7 @@ class GameMenuScreen:
         self.p2_time = NumberInput(
             "Temps (s)",
             x + col_w + 30,
-            450,
+            530,
             120,
             default_value=1.0,
             min_value=0.1,
@@ -97,8 +101,7 @@ class GameMenuScreen:
             allow_float=True
         )
         
-        self.launch = Button((x, 550, 240, 52), "Lancer la Partie", self.start_game)
-        self.back_btn = Button((x, 610, 240, 48), "Retour Menu Principal", self.back_to_main)
+        self.launch = Button((x, 620, 240, 48), "Lancer", self.start_game)
 
     def start_game(self):
         # Instanciation du jeu choisi
@@ -143,12 +146,17 @@ class GameMenuScreen:
 
         self.app.screen_obj = GameRunScreen(self.app, game_key, game_inst, agent1, agent2)
 
-    def back_to_main(self):
-        from.app import MenuScreen
+    def show_search(self):
+        from .app import MenuScreen
         self.app.screen_obj = MenuScreen(self.app)
+
+    def show_games(self):
+        pass  # Le menu des jeux est déjà affiché.
 
     def handle(self, ev):
         if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
+            self.search_type_btn.click(ev.pos)
+            self.games_type_btn.click(ev.pos)
             self.game_selector.click(ev.pos)
             self.p1_selector.click(ev.pos)
             self.p2_selector.click(ev.pos)
@@ -168,7 +176,6 @@ class GameMenuScreen:
                 self.p2_time.handle(ev)
 
             self.launch.click(ev.pos)
-            self.back_btn.click(ev.pos)
         elif ev.type == pygame.KEYDOWN:
 
             if self.p1_selector.selected == "minimax":
@@ -184,21 +191,38 @@ class GameMenuScreen:
                 self.p2_time.handle(ev)
 
             if ev.key == pygame.K_ESCAPE:
-                self.back_to_main()
+                self.show_search()
+            elif ev.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                self.start_game()
 
     def update(self, dt):
         pass
 
     def draw(self, surf):
         surf.fill(T.BG)
-        T.draw_text(surf, "AUSSI V3.0 - Jeux Adversariaux", (60, 30), 54, T.ACCENT, bold=True)
-        T.draw_text(surf, "Moteur de décision générique (Minimax & MCTS)", (60, 75), 26, T.MUTED)
-        
+        T.draw_text(surf, "AUSSI V3.0", (60, 25), 48, T.ACCENT, bold=True)
+        T.draw_text(surf, "Moteur de décision générique (Minimax & MCTS)", (60, 72), 24, T.MUTED)
+        self.search_type_btn.draw(surf)
+        self.games_type_btn.draw(surf, selected=True)
         self.game_selector.draw(surf)
-        self.p1_selector.draw(surf)
-        self.p2_selector.draw(surf)
+
+        # Au Puissance 4, les joueurs sont identifiés par la couleur de leurs jetons.
+        # Pour le Tic-Tac-Toe, on conserve les symboles X et O.
+        if self.game_selector.selected == "connect4":
+            self.p1_selector.title = "Joueur 1"
+            self.p2_selector.title = "Joueur 2"
+            self.p1_selector.draw(surf)
+            self.p2_selector.draw(surf)
+            pygame.draw.circle(surf, (220, 55, 55), (self.p1_selector.x + 100, self.p1_selector.y + 11), 7)
+            pygame.draw.circle(surf, (245, 205, 55), (self.p2_selector.x + 100, self.p2_selector.y + 11), 7)
+        else:
+            self.p1_selector.title = "Joueur 1 (X)"
+            self.p2_selector.title = "Joueur 2 (O)"
+            self.p1_selector.draw(surf)
+            self.p2_selector.draw(surf)
+
         self.launch.draw(surf)
-        self.back_btn.draw(surf)
+        T.draw_text(surf, "Entrée : lancer", (320, 634), 22, T.MUTED)
         if self.p1_selector.selected == "minimax":
             self.p1_depth.draw(surf)
             self.p1_time.draw(surf)
@@ -400,7 +424,29 @@ class GameRunScreen:
         current_player = self.game.player_to_move(self.state)
         current_agent_name = self.agents[current_player]
 
-        T.draw_text(surf, f"Tour : Joueur {current_player}", (x, y), 24, T.ACCENT, bold=True)
+        # Affiche aussi le symbole ou la couleur correspondant au joueur actif.
+        if self.game_key == "connect4":
+            turn_label = f"Tour : Joueur {current_player}"
+            T.draw_text(surf, turn_label, (x, y), 24, T.ACCENT, bold=True)
+
+            label_width = T.font(24, bold=True).size(turn_label)[0]
+            token_color = (220, 55, 55) if current_player == self.game.player1 else (245, 205, 55)
+            pygame.draw.circle(
+                surf,
+                token_color,
+                (x + label_width + 16, y + 13),
+                7
+            )
+        else:
+            symbol = "X" if current_player == self.game.player1 else "O"
+            T.draw_text(
+                surf,
+                f"Tour : Joueur {current_player} ({symbol})",
+                (x, y),
+                24,
+                T.ACCENT,
+                bold=True
+            )
         y += 30
         T.draw_text(surf, f"Type : {current_agent_name.__class__.__name__}", (x, y), 19, T.MUTED)
         y += 40
