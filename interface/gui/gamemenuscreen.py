@@ -101,7 +101,7 @@ class GameMenuScreen:
             allow_float=False
         )
         
-        self.launch = Button((x, 600, 240, 48), "Lancer", self.start_game)
+        self.launch = Button((x, 620, 240, 48), "Lancer", self.start_game)
 
     def start_game(self):
         # Instanciation du jeu choisi
@@ -222,7 +222,7 @@ class GameMenuScreen:
             self.p2_selector.draw(surf)
 
         self.launch.draw(surf)
-        T.draw_text(surf, "Entrée : lancer", (320, 614), 22, T.MUTED)
+        T.draw_text(surf, "Entrée : lancer", (320, 634), 22, T.MUTED)
         if self.p1_selector.selected == "minimax":
             self.p1_depth.draw(surf)
             self.p1_time.draw(surf)
@@ -424,7 +424,29 @@ class GameRunScreen:
         current_player = self.game.player_to_move(self.state)
         current_agent_name = self.agents[current_player]
 
-        T.draw_text(surf, f"Tour : Joueur {current_player}", (x, y), 24, T.ACCENT, bold=True)
+        # Affiche le symbole (X/O) ou la couleur du jeton du joueur actif.
+        if self.game_key == "connect4":
+            turn_label = f"Tour : Joueur {current_player}"
+            T.draw_text(surf, turn_label, (x, y), 24, T.ACCENT, bold=True)
+
+            label_width = T.font(24, bold=True).size(turn_label)[0]
+            token_color = (220, 55, 55) if current_player == self.game.player1 else (245, 205, 55)
+            pygame.draw.circle(
+                surf,
+                token_color,
+                (x + label_width + 16, y + 13),
+                7
+            )
+        else:
+            symbol = "X" if current_player == self.game.player1 else "O"
+            T.draw_text(
+                surf,
+                f"Tour : Joueur {current_player} ({symbol})",
+                (x, y),
+                24,
+                T.ACCENT,
+                bold=True
+            )
         y += 30
         T.draw_text(surf, f"Type : {current_agent_name.__class__.__name__}", (x, y), 19, T.MUTED)
         y += 40
