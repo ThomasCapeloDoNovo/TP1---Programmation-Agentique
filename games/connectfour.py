@@ -1,4 +1,4 @@
-from games.game import Game
+from .game import Game
 
 class ConnectFour(Game):
     """Puissance 4.
