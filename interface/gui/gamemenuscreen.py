@@ -1,5 +1,7 @@
 import pygame
 import time
+import threading
+import copy
 
 from .widgets import Button, Selector, VerticalSelector, NumberInput
 from . import theme as T
@@ -240,6 +242,8 @@ class GameRunScreen:
         # Stockage des dernières métriques de l'agent pour le panneau latéral
         self.last_agent_stats = "En attente du premier coup..."
 
+        self.ai_thread = None
+        self.pending_ai_results = None
 
     def back_to_menu(self):
         self.app.screen_obj = GameMenuScreen(self.app)
@@ -283,43 +287,84 @@ class GameRunScreen:
 
         return self.renderer.get_action_from_click(pos, self.BOARD_RECT, self.game, self.state)
 
+    def compute_ai_move(self, current_player, current_agent, state):
+        start_t = time.perf_counter()
+
+        action = current_agent.get_move(
+            self.game,
+            state
+        )
+
+        elapsed = time.perf_counter() - start_t
+
+        self.pending_ai_results = (
+            action,
+            elapsed,
+            current_player,
+            current_agent
+        )
+
     def update(self, dt): # boucle de jeu / ~SEARCH
-        if self.game_over or self.ai_thinking:
+        self.check_game_state() # au cas où
+
+        if self.game_over:
             return
 
-        current_player = self.game.player_to_move(self.state)
-        current_agent = self.agents[current_player]
-
-        # Si le joueur actuel est une IA (Minimax, MCTS, Random), on récupère son coup automatiquement
-        if not isinstance(current_agent, HumanAgent):
-            self.ai_thinking = True
-            
-            # L'appel à l'agent se fait de manière générique via l'interface du jeu
-            start_t = time.perf_counter()
-            action = current_agent.get_move(self.game, self.state)
-            elapsed = time.perf_counter() - start_t
-            
+        # une ia vient de finir sa recherche
+        if self.pending_ai_results is not None:
+            action, elapsed, current_player, current_agent = self.pending_ai_results
             if action is not None and self.game.is_legal(self.state, action):
                 self.state = self.game.result(self.state, action)
-                
-                # Construction des statistiques
+
                 stats_lines = [
                     f"Joueur : {current_player}",
                     f"Agent : {current_agent.__class__.__name__}",
                     f"Coup : {action}",
                     f"Temps : {elapsed:.3f} s"
                 ]
-                if hasattr(current_agent, 'last_completed_depth'):
-                    stats_lines.append(f"Profondeur IDS complétée : {current_agent.last_completed_depth} / {current_agent.max_depth}")
-                if hasattr(current_agent, 'nodes_explored'):
-                    stats_lines.append(f"Nœuds explorés : {current_agent.nodes_explored}")
-                if hasattr(current_agent, 'last_simulations_run'):
-                    stats_lines.append(f"Simulations : {current_agent.last_simulations_run}")
-                
+
+                if hasattr(current_agent, "last_completed_depth"):
+                    stats_lines.append(
+                        f"Profondeur IDS complétée : "
+                        f"{current_agent.last_completed_depth} / {current_agent.max_depth}"
+                    )
+
+                if hasattr(current_agent, "nodes_explored"):
+                    stats_lines.append(
+                        f"Nœuds explorés : {current_agent.nodes_explored}"
+                    )
+
+                if hasattr(current_agent, "last_simulations_run"):
+                    stats_lines.append(
+                        f"Simulations : {current_agent.last_simulations_run}"
+                    )
+
                 self.last_agent_stats = "\n".join(stats_lines)
 
+            self.pending_ai_results = None
+            self.ai_thread = None
             self.ai_thinking = False
+
             self.check_game_state()
+            return 
+
+        if self.ai_thinking:
+            return
+        
+        current_player = self.game.player_to_move(self.state)
+        current_agent = self.agents[current_player]
+
+        # Si le joueur actuel est une IA (Minimax, MCTS, Random), on récupère son coup automatiquement
+        if not isinstance(current_agent, HumanAgent):
+            self.ai_thinking = True
+            state_snapshot = copy.deepcopy(self.state)
+            # L'appel à l'agent se fait de manière générique via l'interface du jeu
+            self.ai_thread = threading.Thread(
+                target=self.compute_ai_move,
+                args=(current_player, current_agent, state_snapshot),
+                daemon=True
+            )
+            self.ai_thread.start()
 
     def check_game_state(self):
         is_term, utility = self.game.is_terminal(self.state)

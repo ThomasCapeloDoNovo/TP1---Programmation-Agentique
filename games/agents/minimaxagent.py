@@ -64,12 +64,15 @@ class MinimaxAgent(Agent):
         
         self.nodes_explored += 1
         is_term, utility = game.is_terminal(state)
+
+        # !! fct eval --
         if is_term:
             if utility == player: return 1
             elif utility is None: return 0
             else: return -1
         if depth == 0:
             return eval_fn(state, player)
+        # -- 
 
         v = float('-inf')
         for action in game.actions(state):
@@ -86,12 +89,15 @@ class MinimaxAgent(Agent):
         
         self.nodes_explored += 1
         is_term, utility = game.is_terminal(state)
+
+        # -- fct eval
         if is_term:
             if utility == player: return 1
             elif utility is None: return 0
             else: return -1
         if depth == 0:
             return eval_fn(state, player)
+        # -- 
 
         v = float('inf')
         for action in game.actions(state):
