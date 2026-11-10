@@ -66,11 +66,7 @@ class MinimaxAgent(Agent):
         is_term, utility = game.is_terminal(state)
 
         # !! fct eval --
-        if is_term:
-            if utility == player: return 1
-            elif utility is None: return 0
-            else: return -1
-        if depth == 0:
+        if is_term or depth == 0:
             return eval_fn(state, player)
         # -- 
 
@@ -91,11 +87,7 @@ class MinimaxAgent(Agent):
         is_term, utility = game.is_terminal(state)
 
         # -- fct eval
-        if is_term:
-            if utility == player: return 1
-            elif utility is None: return 0
-            else: return -1
-        if depth == 0:
+        if is_term or depth == 0:
             return eval_fn(state, player)
         # -- 
 
