@@ -61,7 +61,7 @@ class GameMenuScreen:
             x,
             445,
             120,
-            default_value=5,
+            default_value=7,
             min_value=1,
             max_value=20
         )
@@ -71,7 +71,7 @@ class GameMenuScreen:
             x,
             525,
             120,
-            default_value=1,
+            default_value=2,
             min_value=1,
             max_value=60,
             allow_float=False
@@ -85,7 +85,7 @@ class GameMenuScreen:
             x + col_w + 30,
             445,
             120,
-            default_value=5,
+            default_value=7,
             min_value=1,
             max_value=20
         )
@@ -95,7 +95,7 @@ class GameMenuScreen:
             x + col_w + 30,
             525,
             120,
-            default_value=1,
+            default_value=2,
             min_value=1,
             max_value=60,
             allow_float=False
