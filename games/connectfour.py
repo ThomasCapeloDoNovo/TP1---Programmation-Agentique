@@ -13,6 +13,8 @@ class ConnectFour(Game):
         self.rows = rows
         self.cols = cols
         self.fcteval = EvalConnectFour(blank = self.blank)
+
+        self._order = self._build_order()
     
     def initial_state(self):
         return tuple(tuple(self.blank for _ in range(self.cols)) for _ in range(self.rows))
@@ -33,24 +35,23 @@ class ConnectFour(Game):
             return self.player1
         return self.player2
 
+    def _build_order(self):
+        mid = self.cols // 2
+        if self.cols % 2 == 1:
+            orde_col = [mid]
+            for d in range(1, mid + 1):
+                orde_col += [mid + d, mid -d]
+        else:
+            orde_col = [mid - 1, mid]
+            for d in range(1, mid):
+                orde_col = [mid - 1 - d, mid + d]
+        return tuple(orde_col)
+    
     def actions(self, state):
         """Une action est valide si la case tout en haut de la colonne est vide."""
         # permet normalement d'améliorer l'alpha-beta -> coups centraux généralement meilleurs
-        orde_col = []
-        mid = self.cols // 2
-        if self.cols % 2 == 1:
-            orde_col.append(mid)
-            for d in range(1, mid + 1):
-                orde_col.append(mid + d)
-                orde_col.append(mid - d)
-        else:
-            orde_col.extend([mid - 1, mid])
-            for d in range(1, mid):
-                orde_col.append(mid - 1 - d)
-                orde_col.append(mid + d)
-
         return [
-            col for col in orde_col
+            col for col in self._order
             if state[0][col] == self.blank
         ]
 

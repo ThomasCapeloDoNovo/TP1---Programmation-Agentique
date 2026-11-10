@@ -29,13 +29,14 @@ class MinimaxAgent(Agent):
 
         # Approfondissement itératif de 1 à max_depth
         for depth in range(1, self.max_depth + 1):
+            ordered_actions = [best_move] + [a for a in legal_actions if a != best_move]
             try:
                 current_best_move = None
                 best_value = float('-inf')
                 alpha = float('-inf')
                 beta = float('inf')
 
-                for action in legal_actions:
+                for action in ordered_actions:
                     if time.time() - start_time > self.time_limit:
                         raise TimeoutError()
                     
