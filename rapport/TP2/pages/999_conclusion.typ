@@ -1,1 +1,7 @@
 #heading(level: 1)[Conclusion]
+
+Ce travail nous a permis de faire évoluer AUSSI vers une troisième version capable de jouer à des jeux à deux joueurs et à tours alternés. Les moteurs Minimax et MCTS ont été écrits de façon générique, ce qui permet de les utiliser sur le Tic Tac Toe et le Puissance 4 sans modifier leur fonctionnement. L’ajout d’un nouveau jeu repose ainsi sur son implémentation de l’interface Game.
+
+Les résultats montrent que les deux algorithmes sont efficaces contre un joueur aléatoire. Mais la comparaison dépend du jeu et des paramètres utilisés. Au TicTacToe les deux moteurs arrivent toujours à égalité alors qu'au Connect 4 les différences sont plus visibles. Ce dernier nous a permis de montrer que lorsque Minimax a une profondeur de recherche suffisante il bat MCTS. MCTS présente de son côté l'avantage de pouvoir améliorer ses estimations en réalisant davantage de simulations, mais celles-ci reposent sur des coups aléatoires et ne lui permettent pas toujours de trouver les meilleures positions.
+
+Enfin ces résultats ne sont qu'indicatifs, il faudrait faire plus de parties pour approdondir la comparaison et voir jusqu'où chaque algorithme pourrait améliorer ses performances.
