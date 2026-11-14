@@ -362,6 +362,11 @@ class GameRunScreen:
                     stats_lines.append(
                         f"Simulations : {current_agent.last_simulations_run}"
                     )
+                if getattr(current_agent, "root_visits", None):
+                    # Affiche les actions dans un ordre stable : ligne puis colonne,
+                    # ou numéro de colonne pour les jeux dont les actions sont des entiers.
+                    for action, count in sorted(current_agent.root_visits.items()):
+                        stats_lines.append(f"Racine {action} : {count} visites")
 
                 self.last_agent_stats = "\n".join(stats_lines)
 
@@ -391,10 +396,9 @@ class GameRunScreen:
             self.ai_thread.start()
 
     def check_game_state(self):
-        is_term, utility = self.game.is_terminal(self.state)
-        if is_term:
+        if self.game.is_terminal(self.state):
             self.game_over = True
-            self.winner = utility  # utility contient le gagnant (player1/player2) ou None (match nul)
+            self.winner = self.game.winner(self.state)
 
     def draw(self, surf):
         surf.fill(T.BG)

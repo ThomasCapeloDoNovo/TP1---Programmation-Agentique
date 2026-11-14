@@ -317,7 +317,7 @@ class RunScreen:
 class App:
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("AUSSI V2.0")
+        pygame.display.set_caption("AUSSI V3.0")
         self.surface = pygame.display.set_mode((W, H))
         self.clock = pygame.time.Clock()
         self.screen_obj = MenuScreen(self)

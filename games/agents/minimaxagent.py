@@ -64,12 +64,12 @@ class MinimaxAgent(Agent):
             raise TimeoutError()
         
         self.nodes_explored += 1
-        is_term, utility = game.is_terminal(state)
+        is_term = game.is_terminal(state)
 
-        # !! fct eval --
-        if is_term or depth == 0:
+        if is_term:
+            return game.utility(state, player)
+        if depth == 0:
             return eval_fn(state, player)
-        # -- 
 
         v = float('-inf')
         for action in game.actions(state):
@@ -85,12 +85,12 @@ class MinimaxAgent(Agent):
             raise TimeoutError()
         
         self.nodes_explored += 1
-        is_term, utility = game.is_terminal(state)
+        is_term = game.is_terminal(state)
 
-        # -- fct eval
-        if is_term or depth == 0:
+        if is_term:
+            return game.utility(state, player)
+        if depth == 0:
             return eval_fn(state, player)
-        # -- 
 
         v = float('inf')
         for action in game.actions(state):

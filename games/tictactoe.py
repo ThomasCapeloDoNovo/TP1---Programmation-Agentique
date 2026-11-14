@@ -36,7 +36,7 @@ class TicTacToe(Game):
         return 0 <= ligne < 3 and 0 <= col < 3 and state[ligne][col] == self.blank
 
     def result(self, state, action):
-        if not self.is_legal(state, action) or self.is_terminal(state)[0]:
+        if not self.is_legal(state, action) or self.is_terminal(state):
             raise ValueError("Illegal move")
         
         ligne, col = action
@@ -63,15 +63,10 @@ class TicTacToe(Game):
         return None
 
     def is_terminal(self, state):
-        """True si le jeu est fini (gagnant ou grille pleine)."""
-        w = self.winner(state)
-        if w is not None:
-            return True, w
-
-        if all(self.blank not in ligne for ligne in state):
-            return True, None
-
-        return False, None
+        """Retourne True si un joueur a gagné ou si la grille est pleine."""
+        if self.winner(state) is not None:
+            return True
+        return all(self.blank not in ligne for ligne in state)
 
     def evaluate(self, state, player):
         """Evaluation"""

@@ -36,17 +36,18 @@ class ConnectFour(Game):
         return self.player2
 
     def _build_order(self):
-        mid = self.cols // 2
-        if self.cols % 2 == 1:
-            orde_col = [mid]
-            for d in range(1, mid + 1):
-                orde_col += [mid + d, mid -d]
-        else:
-            orde_col = [mid - 1, mid]
-            for d in range(1, mid):
-                orde_col = [mid - 1 - d, mid + d]
-        return tuple(orde_col)
-    
+        """Ordre centre vers bords, valide pour tout nombre de colonnes."""
+        mid_left = (self.cols - 1) // 2
+        order = []
+        for distance in range(self.cols):
+            left = mid_left - distance
+            right = mid_left + 1 + distance
+            if 0 <= left < self.cols and left not in order:
+                order.append(left)
+            if 0 <= right < self.cols and right not in order:
+                order.append(right)
+        return tuple(order)
+
     def actions(self, state):
         """Une action est valide si la case tout en haut de la colonne est vide."""
         # permet normalement d'améliorer l'alpha-beta -> coups centraux généralement meilleurs
@@ -61,7 +62,7 @@ class ConnectFour(Game):
         return state[0][action] == self.blank
 
     def result(self, state, action):
-        if not self.is_legal(state, action) or self.is_terminal(state)[0]:
+        if not self.is_legal(state, action) or self.is_terminal(state):
             raise ValueError("Illegal move")
         
         # Copie de la grille
@@ -112,16 +113,10 @@ class ConnectFour(Game):
         return None
 
     def is_terminal(self, state):
-        """True si la partie est gagnée ou si la grille est pleine (match nul)."""
-        w = self.winner(state)
-        if w is not None:
-            return True, w
-
-        # Vérifier si la grille est pleine (ligne du haut entièrement remplie)
-        if all(cell != self.blank for cell in state[0]):
-            return True, None
-
-        return False, None
+        """Retourne True si la partie est gagnée ou si la grille est pleine."""
+        if self.winner(state) is not None:
+            return True
+        return all(cell != self.blank for cell in state[0])
 
     def evaluate(self, state, player):
         """Évaluation"""
