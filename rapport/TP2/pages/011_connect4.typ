@@ -6,14 +6,14 @@ Le Puissance 4 se joue sur une grille de 6 lignes et 7 colonnes. Les joueurs dé
 
 - *État* : un tuple de 6 tuples de 7 entiers (0 pour vide, 1 ou 2 pour les joueurs), la case $(0, 0)$ étant en haut à gauche.
 - *Joueur courant* : déduit du nombre de jetons posés, le joueur 1 commence.
-- *Actions* : l'indice des colonnes dont la case du haut est vide. Elles sont retournées dans l'ordre 3, 4, 2, 5, 1, 6, 0, c'est-à-dire du centre vers les bords. Les coups centraux sont en général meilleurs car ils participent à plus d'alignements possibles ; les examiner en premier augmente le nombre de coupes de l'élagage alpha-bêta.
+- *Actions* : l'indice des colonnes dont la case du haut est vide. Elles sont retournées dans l'ordre 3, 4, 2, 5, 1, 6, 0, c'est-à-dire du centre vers les bords. Les coups centraux sont en général meilleurs car ils participent à plus d'alignements possibles, les examiner en premier augmente le nombre de coupes de l'élagage alpha-bêta.
 - *Résultat* : la gravité est simulée en cherchant, depuis le bas, la première case vide de la colonne choisie.
-- *Test de fin* : on cherche un alignement de quatre jetons dans les quatre directions ; la partie est nulle si la ligne du haut est entièrement remplie.
+- *Test de fin* : on cherche un alignement de quatre jetons dans les quatre directions, la partie est nulle si la ligne du haut est entièrement remplie.
 
 *Fonction d'évaluation.* Comme au Tic Tac Toe, elle est calculée du point de vue d'un joueur $J$, et les termes adverses sont multipliés par 1,01. Elle somme deux composantes :
 
 + *Fenêtres de quatre cases* (horizontales et diagonales) : toutes les fenêtres sont générées une seule fois. Une fenêtre contenant des jetons des deux joueurs est ignorée. Sinon elle rapporte un poids selon le nombre de jetons du même joueur : 0 pour un, 100 pour deux, 1 000 pour trois et 100 000 pour quatre (victoire). Le poids est ajouté si la fenêtre appartient à $J$ et retiré si elle appartient à l'adversaire.
-+ *Colonnes (alignements verticaux)* : pour ch aque colonne, on regarde la pile de jetons de même couleur au sommet ($n$ jetons) et le nombre de cases libres au-dessus. Si $n$ plus les cases libres permet encore d'atteindre quatre, la colonne a un potentiel et rapporte le poids correspondant à $n$. Une pile d'un seul jeton rapporte un poids lié à sa colonne, `[2, 6, 9, 16, 9, 6, 2]`, qui favorise le centre.
++ *Colonnes (alignements verticaux)* : pour chaque colonne, on regarde la pile de jetons de même couleur au sommet ($n$ jetons) et le nombre de cases libres au-dessus. Si $n$ plus les cases libres permet encore d'atteindre quatre, la colonne a un potentiel et rapporte le poids correspondant à $n$. Une pile d'un seul jeton rapporte un poids lié à sa colonne, `[2, 6, 9, 16, 9, 6, 2]`, qui favorise le centre.
 
 #heading(level: 2)[Comparaison des algorithmes]
 
