@@ -1,0 +1,88 @@
+﻿├── agentic
+│   ├── __init__.py
+│   ├── chat.py
+│   ├── engine.py
+│   ├── mcp_server.py
+│   ├── schemas.py
+│   └── specs.py
+├── games
+│   ├── agents
+│   │   ├── __init__.py
+│   │   ├── agent.py
+│   │   ├── humainagent.py
+│   │   ├── mctsagent.py
+│   │   ├── minimaxagent.py
+│   │   └── randomagent.py
+│   ├── __init__.py
+│   ├── connectfour.py
+│   ├── game.py
+│   └── tictactoe.py
+├── interface
+│   ├── gui
+│   │   ├── __init__.py
+│   │   ├── app.py
+│   │   ├── gamemenuscreen.py
+│   │   ├── renderers.py
+│   │   ├── renderersgames.py
+│   │   ├── theme.py
+│   │   └── widgets.py
+│   ├── __init__.py
+│   ├── cli.py
+│   └── report.py
+├── problems
+│   ├── __init__.py
+│   ├── arith.py
+│   ├── ariths.py
+│   ├── maps.py
+│   ├── maze.py
+│   ├── mazes.py
+│   ├── navigation.py
+│   ├── npuzzle.py
+│   └── npuzzles.py
+├── rapport
+│   ├── TP1
+│   │   ├── assets
+│   │   │   └── Logo_DIM20.jpg
+│   │   ├── pages
+│   │   │   ├── 000_cover.typ
+│   │   │   ├── 001_outline.typ
+│   │   │   ├── 002_intro.typ
+│   │   │   ├── 010_labyrinthe.typ
+│   │   │   ├── 011_NPUZZLE.typ
+│   │   │   ├── 012_jeuarhi.typ
+│   │   │   ├── 013_Navigation.typ
+│   │   │   └── 999_conclusion.typ
+│   │   ├── template
+│   │   │   ├── page.typ
+│   │   │   └── styles.typ
+│   │   ├── main.pdf
+│   │   └── main.typ
+│   └── TP2
+│       ├── assets
+│       │   └── Logo_DIM20.jpg
+│       ├── pages
+│       │   ├── 000_cover.typ
+│       │   ├── 001_outline.typ
+│       │   ├── 002_intro.typ
+│       │   ├── 010_tic_tac_toe.typ
+│       │   ├── 011_connect4.typ
+│       │   └── 999_conclusion.typ
+│       ├── template
+│       │   ├── page.typ
+│       │   └── styles.typ
+│       ├── main.pdf
+│       └── main.typ
+├── src
+│   ├── __init__.py
+│   ├── agent.py
+│   ├── node.py
+│   ├── problem.py
+│   ├── search.py
+│   └── strategies.py
+├── .gitignore
+├── main.py
+├── README.md
+├── requirements.txt
+├── test_engine.py
+├── TP1 - AUSSI résout des problèmes.pdf
+└── tree.txt

@@ -1,2 +1,6 @@
 pygame==2.6.1
 sympy==1.14.0
+mcp[cli]==1.30.0
+langchain==1.5.2
+langchain-ollama==1.1.0
+langchain-mcp-adapters==0.3.1
