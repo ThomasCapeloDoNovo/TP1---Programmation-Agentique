@@ -42,6 +42,7 @@ class GameMenuScreen:
         # Choix du type de problème, toujours accessible en haut
         self.search_type_btn = Button((x, 100, 300, 44), "Problème de recherche", self.show_search)
         self.games_type_btn = Button((x + 315, 100, 300, 44), "Problème à 2 joueurs", self.show_games)
+        self.chat_type_btn = Button((x + 630, 100, 300, 44), "Chat avec AUSSI", self.show_chat)
 
         # Choix du jeu
         self.game_selector = Selector("Jeu", x, 165, w, 
@@ -150,6 +151,10 @@ class GameMenuScreen:
         from .app import MenuScreen
         self.app.screen_obj = MenuScreen(self.app)
 
+    def show_chat(self):
+        from .chat_screen import ChatScreen
+        self.app.screen_obj = ChatScreen(self.app, back=lambda: GameMenuScreen(self.app))
+
     def show_games(self):
         pass  # Le menu des jeux est déjà affiché.
 
@@ -157,6 +162,7 @@ class GameMenuScreen:
         if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
             self.search_type_btn.click(ev.pos)
             self.games_type_btn.click(ev.pos)
+            self.chat_type_btn.click(ev.pos)
             self.game_selector.click(ev.pos)
             self.p1_selector.click(ev.pos)
             self.p2_selector.click(ev.pos)
@@ -204,6 +210,7 @@ class GameMenuScreen:
         T.draw_text(surf, "Moteur de décision générique (Minimax & MCTS)", (60, 72), 24, T.MUTED)
         self.search_type_btn.draw(surf)
         self.games_type_btn.draw(surf, selected=True)
+        self.chat_type_btn.draw(surf)
         self.game_selector.draw(surf)
 
         # Au Puissance 4, les joueurs sont identifiés par la couleur de leurs jetons.

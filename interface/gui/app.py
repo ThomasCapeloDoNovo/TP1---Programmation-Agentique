@@ -70,8 +70,9 @@ class MenuScreen:
     def __init__(self, app):
         self.app = app
         x, w = 60, W - 120
-        self.search_type_btn = Button((x, 105, 300, 44), "Problème de recherche", self.show_search)
-        self.games_type_btn = Button((x + 315, 105, 300, 44), "Problème à 2 joueurs", self.show_games)
+        self.search_type_btn = Button((x, 100, 300, 44), "Problème de recherche", self.show_search)
+        self.games_type_btn = Button((x + 315, 100, 300, 44), "Problème à 2 joueurs", self.show_games)
+        self.chat_type_btn = Button((x + 630, 100, 300, 44), "Chat avec AUSSI", self.show_chat)
 
         self.problem = Selector("Problème", x, 170, w,
                                 [(k, PROBLEM_LABELS.get(k, k.title())) for k in PROBLEMS],
@@ -99,12 +100,18 @@ class MenuScreen:
         from .gamemenuscreen import GameMenuScreen
         self.app.screen_obj = GameMenuScreen(self.app)
 
+    def show_chat(self):
+        from .chat_screen import ChatScreen
+        self.app.screen_obj = ChatScreen(self.app, back=lambda: MenuScreen(self.app))
+
+
     def handle(self, ev):
         if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
             for s in self.selectors:
                 s.click(ev.pos)
             self.search_type_btn.click(ev.pos)
             self.games_type_btn.click(ev.pos)
+            self.chat_type_btn.click(ev.pos)
             self.launch.click(ev.pos)
         elif ev.type == pygame.KEYDOWN and ev.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
             self.start()
@@ -118,6 +125,7 @@ class MenuScreen:
         T.draw_text(surf, "Agent Universel de Support Super Intelligent", (60, 72), 24, T.MUTED)
         self.search_type_btn.draw(surf, selected=True)
         self.games_type_btn.draw(surf)
+        self.chat_type_btn.draw(surf)
         for s in self.selectors:
             s.draw(surf)
         self.launch.draw(surf)
