@@ -1,4 +1,14 @@
-﻿├── agentic
+﻿C:\Users\DELL\Documents\1UQAC\cours\semestre9\8IAR878_Agentique\Travail1\TP1---Programmation-Agentique
+├── agentic
+│   ├── adapters
+│   │   ├── baseadapter.py
+│   │   ├── connect4adapter.py
+│   │   └── tictactoeadapter.py
+│   ├── renderers
+│   │   ├── __init__.py
+│   │   ├── baserenderer.py
+│   │   ├── connect4renderer.py
+│   │   └── tictactoerenderer.py
 │   ├── __init__.py
 │   ├── chat.py
 │   ├── engine.py
