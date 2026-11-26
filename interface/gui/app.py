@@ -19,8 +19,9 @@ from problems import PROBLEMS, PROBLEM_LABELS, build
 from . import theme as T
 from .renderers import get_renderer
 from .widgets import Button, Selector
+from .options import OptionsMenu
 
-W, H = 1100, 720
+W, H = 1100, 755
 LIMITS = dict(max_expansions=300_000, max_time=10.0)
 ROW_H = 24
 
@@ -328,6 +329,7 @@ class App:
         pygame.display.set_caption("AUSSI V3.0")
         self.surface = pygame.display.set_mode((W, H))
         self.clock = pygame.time.Clock()
+        self.options = OptionsMenu(pos=(W - 52, H - 52))   # roue en bas à droite
         self.screen_obj = MenuScreen(self)
         self.running = True
 
@@ -335,10 +337,13 @@ class App:
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 self.running = False
+            elif self.options.handle(ev, self.surface):
+                continue                      # événement pris par la fenêtre d'options
             else:
                 self.screen_obj.handle(ev)
         self.screen_obj.update(dt)
-        self.screen_obj.draw(self.surface)
+        self.screen_obj.draw(self.surface)    # l'écran courant se dessine normalement…
+        self.options.draw(self.surface)       # …et les options se superposent par-dessus
         pygame.display.flip()
 
     def run(self):
