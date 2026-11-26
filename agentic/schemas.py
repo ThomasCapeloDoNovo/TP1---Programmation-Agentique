@@ -10,7 +10,10 @@ class Connect4State(BaseModel):
 class TicTacToeState(BaseModel):
     grid: list[list[int]]
 
-type LI_STATE_LLM = Connect4State | TicTacToeState
+class GomokuState(BaseModel):
+    grid: list[list[int]]
+
+type LI_STATE_LLM = Connect4State | TicTacToeState | GomokuState
 
 class GameView(BaseModel):
     """
@@ -26,7 +29,7 @@ class GameView(BaseModel):
     game_id: str
 
     # Nom du jeu associé à cette partie. Sert notamment à savoir quelles règles appliquer et quels outils de rendu utiliser.
-    game: Literal["tictactoe", "connect4"]
+    game: Literal["tictactoe", "connect4", "gomoku"]
 
     # État brut du jeu.
     # Cet état doit contenir suffisamment d'informations pour reconstruire entièrement la partie sans ambiguïté.

@@ -22,9 +22,11 @@ from typing import Type
 
 from .adapters.tictactoeadapter import TicTacToeAdapter, TicTacToeState
 from .adapters.connect4adapter import Connect4Adapter, Connect4State
+from .adapters.gomokuadapter import GomokuAdapter, GomokuState
 
 from .renderers.tictactoerenderer import TicTacToeRenderer
 from .renderers.connect4renderer import Connect4Renderer
+from .renderers.gomokurenderer import GomokuRenderer
 
 
 @dataclass(frozen=True)
@@ -54,5 +56,10 @@ GAMES = {
         state_model=Connect4State,
         adapter=Connect4Adapter,
         renderer=Connect4Renderer,
+    ),
+    "gomoku": GameDefinition(
+        state_model=GomokuState,
+        adapter=GomokuAdapter,
+        renderer=GomokuRenderer,
     ),
 }

@@ -26,7 +26,7 @@ mcp = FastMCP("aussi")
 
 @mcp.tool()
 def new_game(
-    game: Annotated[Literal["tictactoe", "connect4"], Field(description="Le jeu à jouer")],
+    game: Annotated[Literal["tictactoe", "connect4", "gomoku"], Field(description="Le jeu à jouer")],
     human_starts: Annotated[bool, Field(description="True si l'humain joue en premier")] = True,
     opponent: Annotated[Literal["minimax", "random"], Field(description="minimax = fort, random = coups aléatoires")] = "minimax",
     ai_depth: Annotated[int,Field(description=("Profondeur maximale de recherche de Minimax"),ge=1,)] = 9,
@@ -47,7 +47,7 @@ def new_game(
 def play_turn(
     game_id: Annotated[str, Field(description="Identifiant retourné par new_game")],
     col: Annotated[int | None, Field(description="Numéro de colonne, à partir de 1")] = None,
-    row: Annotated[int | None, Field(description="Numéro de ligne, à partir de 1 (morpion seulement, inutile au puissance 4)")] = None,
+    row: Annotated[int | None, Field(description="Numéro de ligne, à partir de 1 (morpion et gomoku, inutile au puissance 4)")] = None,
 ) -> GameView:
     """Joue le coup de l'humain, puis l'IA répond automatiquement."""
     return GameEngine.play_turn(
