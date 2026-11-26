@@ -9,6 +9,7 @@ from .renderersgames import get_game_renderer
 
 from games.tictactoe import TicTacToe
 from games.connectfour import ConnectFour
+from games.isolation import Isolation
 from games.agents.humainagent import HumanAgent
 from games.agents.randomagent import RandomAgent
 from games.agents.minimaxagent import MinimaxAgent
@@ -22,7 +23,8 @@ ROW_H = 24
 
 LI_GAME = {
     "tictactoe" : {"title" : "Tic-Tac-Toe (3x3)", "game" : TicTacToe},
-    "connect4" : {"title": "Puissance 4 (6x7)", "game" : ConnectFour}
+    "connect4" : {"title": "Puissance 4 (6x7)", "game" : ConnectFour},
+    "isolation": {"title": "Isolation (7x7)", "game": Isolation}
 } 
 
 LI_AGENT = {

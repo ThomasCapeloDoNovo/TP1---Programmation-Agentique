@@ -1,6 +1,7 @@
 import pygame
 from games.tictactoe import TicTacToe
 from games.connectfour import ConnectFour
+from games.isolation import Isolation
 from games.game import Game
 from . import theme as T
 
@@ -103,10 +104,70 @@ class ConnectFourRenderer(GameRenderer):
             return col
         return None
 
+class IsolationRenderer(GameRenderer):
+    def _geometry(self, rect, game):
+        n = game.size
+        cell = int(min(rect.w / n, rect.h / n))
+        ox = rect.x + (rect.w - cell * n) // 2
+        oy = rect.y + (rect.h - cell * n) // 2
+        return n, cell, ox, oy
+
+    def draw(self, surf, rect, game, state):
+        n, cell, ox, oy = self._geometry(rect, game)
+
+        pygame.draw.rect(surf, (40, 44, 52), (ox, oy, cell * n, cell * n), border_radius=8)
+
+        # Destinations possibles pour le joueur courant (aide visuelle)
+        legal_dests = set()
+        if not game.is_terminal(state):
+            legal_dests = {dest for dest, _ in game.actions(state)}
+
+        for r in range(n):
+            for c in range(n):
+                cr = pygame.Rect(ox + c * cell, oy + r * cell, cell, cell)
+                center = cr.center
+                cell_val = state[r][c]
+
+                if cell_val == game.blocked:
+                    # Case retirée : plus sombre que le fond du plateau
+                    pygame.draw.rect(surf, T.BG, cr.inflate(-6, -6), border_radius=8)
+                    continue
+
+                pygame.draw.rect(surf, T.PANEL_LIGHT, cr.inflate(-6, -6), border_radius=8)
+
+                if cell_val == game.player1:
+                    pygame.draw.circle(surf, T.ACCENT, center, cell // 2 - 10)
+                    T.draw_text(surf, "X", center, int(cell * 0.4), T.BG, bold=True, center=True)
+                elif cell_val == game.player2:
+                    pygame.draw.circle(surf, T.GOOD, center, cell // 2 - 10)
+                    T.draw_text(surf, "O", center, int(cell * 0.4), T.BG, bold=True, center=True)
+                elif (r, c) in legal_dests:
+                    pygame.draw.circle(surf, T.TEXT, center, max(3, cell // 10))
+
+    def get_action_from_click(self, pos, rect, game, state):
+        n, cell, ox, oy = self._geometry(rect, game)
+
+        # Vérifier si le clic est bien à l'intérieur de la grille de jeu
+        if not (ox <= pos[0] < ox + cell * n and oy <= pos[1] < oy + cell * n):
+            return None
+
+        col = (pos[0] - ox) // cell
+        row = (pos[1] - oy) // cell
+
+        # La case retirée est toujours la case de départ du joueur courant
+        player = game.player_to_move(state)
+        start = game._find_player(state, player)
+        if start is None:
+            return None
+
+        action = ((row, col), start)
+        return action if game.is_legal(state, action) else None
+    
 # Registre des renderers de jeux
 GAME_RENDERERS = [
     (TicTacToe, TicTacToeRenderer()),
     (ConnectFour, ConnectFourRenderer()),
+    (Isolation, IsolationRenderer())
 ]
 
 def get_game_renderer(Game: Game):
