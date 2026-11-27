@@ -10,6 +10,7 @@ from .renderersgames import get_game_renderer
 from games.tictactoe import TicTacToe
 from games.connectfour import ConnectFour
 from games.isolation import Isolation
+from games.quoridor import Quoridor
 from games.agents.humainagent import HumanAgent
 from games.agents.randomagent import RandomAgent
 from games.agents.minimaxagent import MinimaxAgent
@@ -24,7 +25,8 @@ ROW_H = 24
 LI_GAME = {
     "tictactoe" : {"title" : "Tic-Tac-Toe (3x3)", "game" : TicTacToe},
     "connect4" : {"title": "Puissance 4 (6x7)", "game" : ConnectFour},
-    "isolation": {"title": "Isolation (7x7)", "game": Isolation}
+    "isolation": {"title": "Isolation (7x7)", "game": Isolation},
+    "quoridor": {"title": "Quoridor (9x9)", "game": Quoridor},
 } 
 
 LI_AGENT = {
@@ -318,7 +320,8 @@ class GameRunScreen:
         if not self.BOARD_RECT.collidepoint(pos):
             return None
 
-        return self.renderer.get_action_from_click(pos, self.BOARD_RECT, self.game, self.state)
+        # même rectangle que dans draw() : sinon le clic est décalé par rapport au dessin
+        return self.renderer.get_action_from_click(pos, self.BOARD_RECT.inflate(-20, -20), self.game, self.state)
 
     def compute_ai_move(self, current_player, current_agent, state):
         start_t = time.perf_counter()
@@ -349,10 +352,11 @@ class GameRunScreen:
             if action is not None and self.game.is_legal(self.state, action):
                 self.state = self.game.result(self.state, action)
 
+                fmt = getattr(self.game, "format_action", str)
                 stats_lines = [
                     f"Joueur : {current_player}",
                     f"Agent : {current_agent.__class__.__name__}",
-                    f"Coup : {action}",
+                    f"Coup : {fmt(action)}",
                     f"Temps : {elapsed:.3f} s"
                 ]
 
@@ -374,8 +378,16 @@ class GameRunScreen:
                 if getattr(current_agent, "root_visits", None):
                     # Affiche les actions dans un ordre stable : ligne puis colonne,
                     # ou numéro de colonne pour les jeux dont les actions sont des entiers.
-                    for action, count in sorted(current_agent.root_visits.items()):
-                        stats_lines.append(f"Racine {action} : {count} visites")
+                    items = sorted(current_agent.root_visits.items())
+                    # Beaucoup d'actions possibles (ex. Quoridor) : on garde les plus visitées
+                    limit = getattr(self.renderer, "max_root_lines", 10)
+                    hidden = max(0, len(items) - limit)
+                    if hidden:
+                        items = sorted(items, key=lambda it: -it[1])[:limit]
+                    for action, count in items:
+                        stats_lines.append(f"Racine {fmt(action)} : {count} visites")
+                    if hidden:
+                        stats_lines.append(f"... et {hidden} autres actions")
 
                 self.last_agent_stats = "\n".join(stats_lines)
 
@@ -464,6 +476,11 @@ class GameRunScreen:
         T.draw_text(surf, f"Type : {current_agent_name.__class__.__name__}", (x, y), 19, T.MUTED)
         y += 40
 
+        # Infos propres au jeu (ex. Quoridor : murs restants), fournies par le renderer
+        side_info = getattr(self.renderer, "side_info", None)
+        if side_info:
+            y = side_info(surf, x, y, w, self.game, self.state)
+
         if self.ai_thinking:
             T.draw_text(surf, "L'IA réfléchit...", (x, y), 22, T.WARN, bold=True)
             y += 40
@@ -475,8 +492,10 @@ class GameRunScreen:
         for line in self.last_agent_stats.split("\n"):
             if ":" in line:
                 key, val = line.split(":", 1)
-                T.draw_text(surf, key.strip() + " :", (x, y), 18, T.MUTED)
-                T.draw_text(surf, val.strip(), (x + 140, y), 18, T.TEXT, bold=True)
+                key = key.strip() + " :"
+                T.draw_text(surf, key, (x, y), 18, T.MUTED)
+                val_x = x + max(140, T.font(18).size(key)[0] + 10)   # évite le chevauchement des clés longues
+                T.draw_text(surf, val.strip(), (val_x, y), 18, T.TEXT, bold=True)
             else:
                 T.draw_text(surf, line, (x, y), 18, T.TEXT)
             y += 26
